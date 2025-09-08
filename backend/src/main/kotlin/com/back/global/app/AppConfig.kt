@@ -4,6 +4,7 @@ import com.back.domain.post.postUser.entity.PostUser
 import com.back.domain.post.postUser.service.PostUserAttrService
 import com.back.standard.util.Ut
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
@@ -14,12 +15,18 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class AppConfig(
     environment: Environment,
     objectMapper: ObjectMapper,
+    @Value("\${custom.site.cookieDomain}") cookieDomain: String,
+    @Value("\${custom.site.frontUrl}") siteFrontUrl: String,
+    @Value("\${custom.site.backUrl}") siteBackUrl: String,
     postUserAttrService: PostUserAttrService
 ) {
     init {
         Companion.environment = environment
         Ut.json.objectMapper = objectMapper
         PostUser.attrService = postUserAttrService
+        _cookieDomain = cookieDomain
+        _siteFrontUrl = siteFrontUrl
+        _siteBackUrl = siteBackUrl
     }
 
     @Bean
@@ -29,6 +36,14 @@ class AppConfig(
 
     companion object {
         private lateinit var environment: Environment
+
+        private lateinit var _cookieDomain: String
+        private lateinit var _siteFrontUrl: String
+        private lateinit var _siteBackUrl: String
+
+        val cookieDomain: String by lazy { _cookieDomain }
+        val siteFrontUrl: String by lazy { _siteFrontUrl }
+        val siteBackUrl: String by lazy { _siteBackUrl }
 
         val isDev: Boolean
             get() = environment.matchesProfiles("dev")
